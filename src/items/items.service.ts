@@ -5,14 +5,12 @@ import { CreateItemDto } from './dto/create-item.dto';
 import { Model } from 'mongoose';
 const AhoCorasick = require('./ahocorasick');
 
-const strings = ['Hello World!', 'This is the second string', 'This is the third string'];
-
 @Injectable()
 export class ItemsService {
-  constructor(@InjectModel(Item.text) private itemModel: Model<ItemDocument>) {}
+  constructor(@InjectModel('Item') private itemModel: Model<ItemDocument>) {}
 
-  getStrings(): string[] {
-    return strings;
+  async getStrings(): Promise<Item[]> {
+    return this.itemModel.find().exec();
   }
 
   async addString(createItemDto: CreateItemDto): Promise<string> {
@@ -21,18 +19,28 @@ export class ItemsService {
     return 'String has been added succesfully';
   }
 
-  findStrings(keyword: string): any[] {
+  async findStrings(keyword: string): Promise<Item[]> {
+    const items = await this.getStrings();
     keyword = keyword.toLowerCase();
     const ac = new AhoCorasick([keyword]);
     const result = [];
-    for (let str of strings) {
-      const lowStr = str.toLowerCase();
+    for (const item of items) {
+      const lowStr = item.text.toLowerCase();
       const searchResult = ac.search(lowStr);
       if (searchResult.length > 0) {
-        result.push(str);
+        result.push(item);
       }
     }
 
     return result;
+  }
+
+  async removeString(id: string) {
+    const res = await this.itemModel.remove({ _id: id });
+    if (res.deletedCount) {
+      return `String with id ${id} has been removed`;
+    } else {
+      return `Error! There is no string with id ${id}`;
+    }
   }
 }

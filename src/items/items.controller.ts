@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Delete } from '@nestjs/common';
 import { ItemsService } from './items.service';
 import { Param } from '@nestjs/common';
 import { CreateItemDto } from './dto/create-item.dto';
@@ -8,23 +8,27 @@ export class ItemsController {
   constructor(private readonly itemsService: ItemsService) {}
 
   @Get()
-  findAll(): string {
-    const response = { data: [''], };
-    response.data = this.itemsService.getStrings();
+  async findAll() {
+    const response = await this.itemsService.getStrings();
     return JSON.stringify(response);
   }
 
   @Get('search/:keyword')
-  findStrings(@Param() params): string {
-    const response = { data: [''], };
-    response.data = this.itemsService.findStrings(params.keyword);
+  async findStrings(@Param() params) {
+    const response = await this.itemsService.findStrings(params.keyword);
     return JSON.stringify(response);
   }
 
   @Post('add-string')
   async addString(@Body() createItemDto: CreateItemDto) {
-    const response = { data: '', };
+    const response = { data: '' };
     response.data = await this.itemsService.addString(createItemDto);
+    return JSON.stringify(response);
+  }
+
+  @Delete(':id')
+  async remove(@Param('id') id: string) {
+    const response = await this.itemsService.removeString(id);
     return JSON.stringify(response);
   }
 }
