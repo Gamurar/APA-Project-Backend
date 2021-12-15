@@ -8,6 +8,11 @@ This is the Node.js backend part.
 ```bash
 $ npm install
 ```
+## MongoDB
+There is a docker-compose.yml file for starting MongoDB database docker container.
+```bash
+$ docker-compose up
+```
 
 ## Running the app
 
