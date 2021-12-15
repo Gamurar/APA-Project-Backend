@@ -1,6 +1,6 @@
 ## Description
 
-React.js + Node.js + MongoDB project with Aho–Corasick algorithm implementation on backend.
+React.js + Node.js + MongoDB project with **Aho–Corasick algorithm** implementation on backend.
 This is the Node.js backend part.
 
 ## Installation
